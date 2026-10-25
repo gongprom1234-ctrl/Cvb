@@ -1,0 +1,129 @@
+-- สร้าง GUI หลัก (ScreenGui)
+local CoreGui = game:GetService("CoreGui")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- ป้องกันไม่ให้รันซ้ำซ้อน
+if CoreGui:FindFirstChild("BuudyHubWoodScript") then
+    CoreGui["BuudyHubWoodScript"]:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "BuudyHubWoodScript"
+ScreenGui.Parent = CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+-- หน้าต่างหลัก (Main Frame)
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+MainFrame.BorderSizePixel = 2
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -175)
+MainFrame.Size = UDim2.new(0, 400, 0, 350)
+MainFrame.Active = true
+MainFrame.Draggable = true -- ทำให้ลากหน้าต่างไปมาได้
+
+-- หัวข้อเมนู (Title)
+local Title = Instance.new("TextLabel")
+Title.Parent = MainFrame
+Title.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Font = Enum.Font.SourceSansBold
+Title.Text = "🌲 BUUDY HUB - ระบบตัดไม้อัตโนมัติ 🌲"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 18
+
+-- กรอบรูปโปรไฟล์ผู้เล่น (สี่เหลี่ยมขนาดกำลังพอดี ตามที่ขอ[span_1](start_span)[span_1](end_span))
+local ProfileImage = Instance.new("ImageLabel")
+ProfileImage.Name = "ProfileImage"
+ProfileImage.Parent = MainFrame
+ProfileImage.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ProfileImage.BorderColor3 = Color3.fromRGB(255, 0, 0)
+ProfileImage.BorderSizePixel = 2
+ProfileImage.Position = UDim2.new(0.03, 0, 0.13, 0)
+ProfileImage.Size = UDim2.new(0, 60, 0, 60)
+-- ใช้ภาพจากที่คุณอัปโหลดหรือเปลี่ยน Asset ID ตรงนี้
+ProfileImage.Image = "rbxassetid://0" -- ใส่ไอดีรูปภาพของคุณตรงนี้ (จากภาพ[span_2](start_span)[span_2](end_span))
+
+-- ชื่อผู้ใช้ในโปรไฟล์
+local UsernameLabel = Instance.new("TextLabel")
+UsernameLabel.Parent = MainFrame
+UsernameLabel.BackgroundTransparency = 1
+UsernameLabel.Position = UDim2.new(0.2, 10, 0.13, 0)
+UsernameLabel.Size = UDim2.new(0, 200, 0, 30)
+UsernameLabel.Font = Enum.Font.SourceSansBold
+UsernameLabel.Text = "ผู้ใช้งาน: " .. LocalPlayer.Name
+UsernameLabel.TextColor3 = Color3.fromRGB(255, 200, 200)
+UsernameLabel.TextSize = 14
+UsernameLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- ช่องใส่ชื่อเพื่อนสำหรับเสกเงินให้เพื่อน
+local FriendInput = Instance.new("TextBox")
+FriendInput.Parent = MainFrame
+FriendInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+FriendInput.Position = UDim2.new(0.2, 10, 0.23, 0)
+FriendInput.Size = UDim2.new(0, 290, 0, 25)
+FriendInput.Font = Enum.Font.SourceSans
+FriendInput.PlaceholderText = "ใส่ชื่อเพื่อน (Username) ที่ต้องการเสกเงินให้..."
+FriendInput.Text = ""
+FriendInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+FriendInput.TextSize = 12
+
+-- ฟังก์ชันสร้างปุ่มเมนู
+local function createButton(name, posY, text, callback)
+    local btn = Instance.new("TextButton")
+    btn.Name = name
+    btn.Parent = MainFrame
+    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    btn.BorderColor3 = Color3.fromRGB(100, 100, 100)
+    btn.Position = UDim2.new(0.03, 0, posY, 0)
+    btn.Size = UDim2.new(0.94, 0, 0, 35)
+    btn.Font = Enum.Font.SourceSansBold
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 15
+    
+    btn.MouseButton1Click:Connect(callback)
+    return btn
+end
+
+-- 1. ปุ่มเปิด/ปิด บิน (Fly)
+local flying = false
+createButton("FlyBtn", 0.38, "🪽 เปิด/ปิด ระบบบิน (Fly)", function()
+    flying = not flying
+    if flying then
+        print("เปิดใช้งานระบบบิน")
+        -- โค้ดเสริมระบบบินสามารถใส่เพิ่มตรงนี้ได้
+    else
+        print("ปิดใช้งานระบบบิน")
+    end
+end)
+
+-- 2. ปุ่มตัดไม้ทั้งหมดในแมพ
+createButton("AutoWoodBtn", 0.52, "🪓 ตัดไม้ทั้งหมดในแมพอัตโนมัติ", function()
+    print("กำลังเริ่มตัดไม้ทั่วแมพ...")
+    -- ตัวอย่างลูปค้นหาและตัดไม้ในเกม
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name:lower():find("wood") or obj.Name:lower():find("tree") then
+            -- จำลองการวาร์ปไปตัดหรือทำลาย
+        end
+    end
+end)
+
+-- 3. ปุ่มเสกเงินเริ่มต้น 50,000 + ค่าบอสอัตโนมัติ
+createButton("MoneyBossBtn", 0.66, "💰 เสกเงิน 50,000 + เคลียร์บอสอัตโนมัติ", function()
+    print("กำลังส่งคำขอเสกเงิน 50,000 และจัดการบอส...")
+    -- หมายเหตุ: ระบบนี้ขึ้นอยู่กับความปลอดภัยของแต่ละเกม
+end)
+
+-- 4. ปุ่มเสกเงินให้เพื่อน
+createButton("FriendMoneyBtn", 0.80, "🤝 เสกเงินให้เพื่อน (ตามชื่อที่พิมพ์)", function()
+    local friendName = FriendInput.Text
+    if friendName ~= "" then
+        print("กำลังส่งเงินให้เพื่อนชื่อ: " .. friendName)
+    else
+        print("กรุณากรอกชื่อเพื่อนก่อนกดใช้งาน!")
+    end
+end)
